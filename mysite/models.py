@@ -49,4 +49,4 @@ class Article(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a detail record for this book."""
-        return reverse('book-detail', args=[str(self.id)])
+        return reverse('article-detail', args=[str(self.id)])
