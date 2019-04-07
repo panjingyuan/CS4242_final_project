@@ -24,9 +24,9 @@ class Article(models.Model):
     # Meta
     # Foreign Key used because article can only have one author, but authors can have multiple articles
     # Author as a string rather than object because it hasn't been declared yet in the file
-    id = models.UUIDField(help_text='Unique article ID')
+    id = models.UUIDField(primary_key = True, help_text='Unique article ID')
     title = models.CharField(max_length=200, help_text='Article name')
-    author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True)
+    author = models.CharField(max_length=200, help_text='Author name')
     summary = models.TextField(help_text='The given synopsis for the file')
     datetime = models.DateTimeField(help_text = 'Time published')
 
@@ -40,7 +40,7 @@ class Article(models.Model):
     img = models.URLField(help_text='Link to image')
     # categories
     cat = models.ForeignKey(Category, on_delete=models.CASCADE, help_text='Category this article is related to')
-    subcat = models.ManyToManyField(Subcat, on_delete=models.SET_NULL help_text='Subcategories this article is related to')
+    subcat = models.ManyToManyField(Subcat, help_text='Subcategories this article is related to')
 
 
     def __str__(self):
