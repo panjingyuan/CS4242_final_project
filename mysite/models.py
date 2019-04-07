@@ -39,8 +39,8 @@ class Article(models.Model):
     link = models.URLField(help_text='Link to Article')
     img = models.URLField(help_text='Link to image')
     # categories
-    cat = models.ForeignKey(Category, help_text='Category this article is related to')
-    subcat = models.ManyToManyField(Subcat, help_text='Subcategories this article is related to')
+    cat = models.ForeignKey(Category, on_delete=models.CASCADE, help_text='Category this article is related to')
+    subcat = models.ManyToManyField(Subcat, on_delete=models.SET_NULL help_text='Subcategories this article is related to')
 
 
     def __str__(self):
