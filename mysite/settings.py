@@ -138,7 +138,7 @@ INSTALLED_APPS = [
     "pinax.webanalytics",
 
     # project
-    "mysite",
+    "mysite"
 ]
 
 ADMIN_URL = "admin:index"
@@ -180,7 +180,7 @@ FIXTURE_DIRS = [
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 ACCOUNT_OPEN_SIGNUP = True
-ACCOUNT_EMAIL_UNIQUE = True
+ACCOUNT_EMAIL_UNIQUE = False
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = False
 ACCOUNT_LOGIN_REDIRECT_URL = "home"
 ACCOUNT_LOGOUT_REDIRECT_URL = "home"
@@ -189,4 +189,5 @@ ACCOUNT_USE_AUTH_AUTHENTICATE = True
 
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
