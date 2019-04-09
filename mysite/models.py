@@ -26,18 +26,22 @@ class Article(models.Model):
     # Author as a string rather than object because it hasn't been declared yet in the file
     id = models.UUIDField(primary_key = True, help_text='Unique article ID')
     title = models.CharField(max_length=200, help_text='Article name')
-    author = models.CharField(max_length=200, help_text='Author name')
-    summary = models.TextField(help_text='The given synopsis for the file')
-    datetime = models.DateTimeField(help_text = 'Time published')
+    author = models.CharField(max_length=200, help_text='Author name', null = True)
+    summary = models.TextField(help_text='The given synopsis for the file', null = True)
+    datetime = models.DateTimeField(help_text = 'Time published', null = True)
 
     # Stats
-    views = models.IntegerField(help_text='View #')
-    favs  = models.IntegerField(help_text='Favourited #')
-    cmnts = models.IntegerField(help_text='Comment #')
+    views = models.IntegerField(help_text='View #', null = True)
+    favs  = models.IntegerField(help_text='Favourited #', null = True)
+    cmnts = models.IntegerField(help_text='Comment #', null = True)
 
-    #
-    link = models.URLField(help_text='Link to Article')
-    img = models.URLField(help_text='Link to image')
+    # Meta info
+    SITES = [("IN","Instructables"),
+            ("WH","WikiHow")]
+    site = models.CharField(max_length = 200, help_text='Instructables or WikiHow', choices=SITES, default=1)
+    url = models.URLField(help_text='Link to Article', null = True)
+    img = models.URLField(help_text='Link to image', null = True)
+
     # categories
     cat = models.ForeignKey(Category, on_delete=models.CASCADE, help_text='Category this article is related to')
     subcat = models.ManyToManyField(Subcat, help_text='Subcategories this article is related to')

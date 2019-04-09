@@ -28,6 +28,15 @@
             <img src="http://pinaxproject.com/pinax-design/tessellations/Project%20Account.png" />
         </div>
     </section>
+    <section class="jumbotron">
+        <div class="container">
+            <h1>Kill my face!</h1>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'users' %}">All users</a></li>
+            {% block stats %}{% endblock %}
+            {% block content %}{% endblock %}
+        </div>
+    </section>
     <section id="content-section">
         <div id="content-body">
             <h2 class="text-center">{% blocktrans %}What is Pinax?{% endblocktrans %}</h2>

@@ -1,0 +1,30 @@
+{% extends "homepage.html" %}
+
+{% block content %}
+  <h1>User List</h1>
+  {% if user_list %}
+  <ul>
+    {% for user in user_list %}
+        <li>
+          {% if user.is_superuser %}
+            <strong>
+            {% if user.is_staff %}
+              <em>{{ user }}</em>
+            {% else %}
+              {{ user }}
+            {% endif %}
+            </strong>
+          {% else %}
+            {% if user.is_staff %}
+              <em>{{ user }}</em>
+            {% else %}
+              {{ user }}
+            {% endif %}
+          {% endif %}
+        </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no users.</p>
+  {% endif %}
+{% endblock %}

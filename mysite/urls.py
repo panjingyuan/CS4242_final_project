@@ -3,12 +3,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 from django.views.generic import TemplateView
+from . import views
 
 from django.contrib import admin
 
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="homepage.html"), name="home"),
+    path("", views.stats, name="home"),
+#    path("", TemplateView.as_view(template_name="homepage.html"), name="home"),
+    path("users/",views.UserListView.as_view(),name="users"),
+    path("stats/", views.stats, name="stats"),
     path("admin/", admin.site.urls),
     path("account/", include("account.urls")),
 ]
