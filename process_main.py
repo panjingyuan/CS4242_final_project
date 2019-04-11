@@ -1,19 +1,33 @@
 # Manually parse the json files to be uploadable
 import json
 import os, sys
-from mysite.models import Article, Category, Subcat
-#from django.core.serializers import serialize
-#from django.core.serializers.json import DjangoJSONEncoder
+import django
+from django.conf import settings
+#import mysite
+#settings.configure(DEBUG = True)
+#print(settings.DJANGO_SETTINGS_MODULE)
+#os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django.conf.global_settings")
+from django.core.serializers import serialize, deserialize
+from django.core.serializers.json import DjangoJSONEncoder
 
-DIR_NAME = "fixtures/"
+if not settings.configured:
+    print("Changing settings...")
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
+
+django.setup()
+
+from mysite.models import Article, Category, Subcat
+
+
+DIR_NAME = "mysite/json_data/"
+OUT_DIR_NAME = "fixtures/"
 WH_FILENAME = "wikihow.json"
 IN_FILENAME = "instructables.json"
 OUT_FILENAME = "unified.json"
 APP_NAME = "mysite"
 ARTICLE_NAME = "article"
-CURR_PK = 0
-os.chdir(DIR_NAME)
-
+CURR_PK = 1
+#os.chdir(DIR_NAME)
 
 SAME_FIELDS =  ["category", "view_count", "url",
                 "image", "title", "project_id"]
@@ -73,9 +87,8 @@ def unify(site_type, entry, CURR_PK):
         fields_obj["sub_category"] = sub_categories
         fields_obj["site"] = "IN"
 
-    CURR_PK += 1
-    result_obj["pk"] = CURR_PK
     result_obj["model"] = APP_NAME + "." + ARTICLE_NAME
+    result_obj["pk"] = CURR_PK
     result_obj["fields"] = fields_obj
 
     return result_obj
@@ -106,12 +119,13 @@ u'co_authors': u'77', u'vote_count': None,
 u'publish_date': u'March 29, 2019',
 u'url': u'https://www.wikihow.com/Guess-a-Password', u'project_id': u'555407'}
 '''
-with open(WH_FILENAME) as WH_file:
+with open(DIR_NAME+WH_FILENAME) as WH_file:
     data_WH = json.load(WH_file)
     values = json.dumps(data_WH, indent=4)
     print(data_WH[0].keys())
     print(data_WH[0])
     WH_unified = unify("WH",data_WH[0], CURR_PK)
+    CURR_PK += 1
     print(WH_unified)
     records.append(WH_unified)
 
@@ -141,14 +155,23 @@ u'author_id': u'MZFJ2UDG3TDVHKI', u'project_id': u'E74OQR1JTENEKA4',
 u'raw_text': [u'I have been working on converting ...'],
 u'channel': u'Electronics'}
 '''
-with open(IN_FILENAME) as IN_file:
+with open(DIR_NAME+IN_FILENAME) as IN_file:
     data_IN = json.load(IN_file)
     #values = json.dumps(data, indent=4)
     print(data_IN[0].keys())
     print(data_IN[0])
     IN_unified = unify("IN",data_IN[0], CURR_PK)
+    CURR_PK += 1
     print(IN_unified)
     records.append(IN_unified)
 
-with open(OUT_FILENAME, 'w') as outfile:
+print(os.path.dirname(os.path.realpath(__file__)))
+with open(OUT_DIR_NAME+OUT_FILENAME, 'w') as outfile:
+    print(json.dumps(records, indent = 4))
+    data = json.dump(records, outfile)
     json.dump(records, outfile)
+
+records_json = serialize('json', records)
+
+for obj in deserialize("json", records_json):
+    print(obj)
