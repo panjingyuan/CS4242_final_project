@@ -24,7 +24,7 @@ class Article(models.Model):
     # Meta
     # Foreign Key used because article can only have one author, but authors can have multiple articles
     # Author as a string rather than object because it hasn't been declared yet in the file
-    id = models.UUIDField(primary_key = True, help_text='Unique article ID')
+    id = models.AutoField(primary_key = True)
     title = models.CharField(max_length=200, help_text='Article name')
     author = models.CharField(max_length=200, help_text='Author name', null = True)
     summary = models.TextField(help_text='The given synopsis for the file', null = True)
@@ -38,12 +38,12 @@ class Article(models.Model):
     # Meta info
     SITES = [("IN","Instructables"),
             ("WH","WikiHow")]
-    site = models.CharField(max_length = 200, help_text='Instructables or WikiHow', choices=SITES, default=1)
-    url = models.URLField(help_text='Link to Article', null = True)
+    sitetype = models.CharField(max_length = 200, help_text='Instructables or WikiHow', choices=SITES, default="1", null = True)
+    page_url = models.URLField(help_text='Link to Article', null = True)
     img = models.URLField(help_text='Link to image', null = True)
 
     # categories
-    cat = models.ForeignKey(Category, on_delete=models.CASCADE, help_text='Category this article is related to')
+    cat = models.ForeignKey(Category, on_delete=models.CASCADE, help_text='Category this article is related to', null = True)
     subcat = models.ManyToManyField(Subcat, help_text='Subcategories this article is related to')
 
 
