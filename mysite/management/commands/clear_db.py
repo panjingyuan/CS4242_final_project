@@ -20,8 +20,11 @@ class Command(BaseCommand):
         parser.add_argument('--cat', action='store_true')
         parser.add_argument('--sub', action='store_true')
 
-    def _confirm(self, var_count, var_name):
-        ans = input("Flushing %d %s. Are you sure? (y)" % (var_count, var_name))
+    def _confirm(self, cls, var_name):
+        print("Flushing %d %s." % (cls.objects.all().count(), var_name))
+        for item in cls.objects.all():
+            print("-" + item)
+        ans = input("Are you sure? (y) ")
         return ans == "y"
 
     def _clear(self, cls):
@@ -29,17 +32,21 @@ class Command(BaseCommand):
         print("Articles flushed.")
 
     def handle(self, *args, **options):
-        #fields
-        DIR_NAME = "mysite/json_data/"
-        OUT_DIR_NAME = "fixtures/"
-        WH_FILENAME = "wikihow.json"
-        IN_FILENAME = "instructables.json"
-        OUT_FILENAME = "unified.json"
-        APP_NAME = "mysite"
-        ARTICLE_NAME = "article"
+        cls = []
 
 #        print(parser.parse_args(args))
         if options["art"]:
-            cls = Article
-            if self._confirm(cls.objects.all().count(), str(cls)):
-                self._clear(cls)
+            cls.append(Article)
+
+        if options["cat"]:
+            cls.append(Category)
+
+        if options["sub"]:
+            cls.append(Subcat)
+
+        if options["all"]:
+            cls.extend([Article, Category, Subcat])
+
+        for class_to_delete in cls:
+            if self._confirm(class_to_delete, str(class_to_delete)):
+                self._clear(class_to_delete)
