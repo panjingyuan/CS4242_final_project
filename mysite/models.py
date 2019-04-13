@@ -53,7 +53,7 @@ class Article(models.Model):
     img = models.URLField(help_text='Link to image', null = True)
 
     # categories
-    cat = models.ForeignKey(Category, on_delete=models.CASCADE, help_text='Category this article is related to', null = True)
+    cat = models.ForeignKey(Category, on_delete=models.SET_NULL, help_text='Category this article is related to', null = True)
     subcat = models.ManyToManyField(Subcat, help_text='Subcategories this article is related to')
 
 

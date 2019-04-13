@@ -31,6 +31,23 @@ class Command(BaseCommand):
     def _get_in_file(self, filepath):
         return proc.load_in(filepath)
 
+    def _store_wh_data(self, wh_data):
+        for entry in wh_data:
+#            for field in proc.REQUIRED_FIELDS:
+#                assert(entry[field] is not None), ("%s cannot be empty, found:\n%s" % (str(field), str(entry)))
+#               wh_record[field] = entry[field]
+            wh_record = Article(            \
+            title = entry["title"],         \
+            img = entry["image"],           \
+            page_url = entry["url"],        \
+            views = entry["view_count"],    \
+            sitetype = entry["site_type"],  \
+            summary = entry["summary"],     \
+            datetime = entry["date"],       \
+            cat = entry["category"])
+#            wh_record.cat = entry["category"]
+            wh_record.save()
+
     def _make_category(self, name="Example"):
         new_cat = Category(name=name)
         new_cat.save()
@@ -59,10 +76,13 @@ class Command(BaseCommand):
         elif options["example"]:
             print("Making example category!")
             self._make_category()
+            print("Making example article!")
+            self._make_article()
         elif options["store_wh"]:
             print("Loading from " + WH_FILENAME + ": ")
             WH_data = self._get_wh_file(DIR_NAME+WH_FILENAME)
             print("%d records found for %s" % (len(WH_data),WH_FILENAME))
+            self._store_wh_data(WH_data)
         elif options["store_in"]:
             print("Loading from " + IN_FILENAME + ": ")
             IN_data = self._get_in_file(DIR_NAME+IN_FILENAME)

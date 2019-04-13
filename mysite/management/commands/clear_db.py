@@ -57,4 +57,4 @@ class Command(BaseCommand):
             elif self._confirm(class_to_delete, str(class_to_delete)):
                 self._clear(class_to_delete)
             else:
-                print("Deletion of %s" % str(class_to_delete))
+                print("Deletion of %s cancelled." % str(class_to_delete))

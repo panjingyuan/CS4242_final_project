@@ -7,6 +7,17 @@ from mysite.models import Article, Category, Subcat
 SAME_FIELDS =  ["category", "view_count", "url",
                 "image", "title", "project_id"]
 
+EXTRA_FIELDS = [
+    "site_type",
+    "summary",
+    "date",
+    "sub_categories"
+]
+
+REQUIRED_FIELDS = []
+
+REQUIRED_FIELDS.extend(SAME_FIELDS)
+REQUIRED_FIELDS.extend(EXTRA_FIELDS)
 # TODO:
 # Add function that parses introduction/raw_text
 # and extracts sub_categories from them
@@ -38,17 +49,35 @@ def wh_date(dt_str):
 def in_date(dt_str):
     return dt.strptime(dt_str, "%Y-%m-%d %H:%M:%S.%f")
 
+def add_cat(cat_name):
+    if (cat_name == None) or (cat_name == "None"):
+#       ans = input("Do you want to give a name to this article? (n to cancel)")
+#       if not ans == "n":
+#       for item in entry:
+#           print(item + ": " + str(entry[item]))
+#       cat_name = input("Enter name of new category: ")
+        cat_name = "Uncategorised"
+    new_cat, created = Category.objects.get_or_create(pk=cat_name)
+    if created:
+        print("Created category %s" % str(new_cat))
+    new_cat.save()
+    return new_cat
+
 # Receives a JSON entry
 # based on the field it encounters,
 # modifies and outputs the data in a unified format.
 # site_type: WH, IN
 def unify(site_type, entry):
     fields_obj = {}
-
+    sub_categories = []
     # Unify if they have the same fields
     for fieldname in SAME_FIELDS:
         if fieldname == "view_count":
             fields_obj[fieldname] = int(entry[fieldname].replace(",","" ))
+        elif fieldname == "category":
+            cat_name = str(entry["category"]).strip()
+            cat = add_cat(cat_name)
+            fields_obj[fieldname] = cat
         else:
             fields_obj[fieldname] = entry[fieldname]
 
@@ -59,15 +88,18 @@ def unify(site_type, entry):
         fields_obj["summary"] = entry["introduction"]
         fields_obj["date"] = wh_date(entry["publish_date"])
         #find sub_categories if they exist
+        fields_obj["sub_categories"] = []
         sub_categories = parse_subcat(entry["introduction"])
         if entry["sub_category"]:
-            fields_obj["sub_category"] = entry["sub_category"]
+            fields_obj["sub_categories"].extend(entry["sub_category"])
+        fields_obj["sub_categories"].extend(sub_categories)
     #If this is an Instructables article
     else:
         fields_obj["summary"] = shorten(''.join(entry["raw_text"]))
         fields_obj["date"] = in_date(entry["publish_date"])
-        sub_categories = parse_subcat(entry["raw_text"])
-        fields_obj["sub_category"] = sub_categories
+        sub_categories.append(entry["channel"])
+        sub_categories.extend(parse_subcat(entry["raw_text"]))
+        fields_obj["sub_categories"] = sub_categories
 
     return fields_obj
 
@@ -80,8 +112,8 @@ same: category, view_count, url, image, title, project_id
 (These fields will remain the same)
 
 modify: - introduction, (SUMMARY)
-        - rating, vote_count (might have to divide this by view_count)
         - publish_date (DATE, change to DDMMYYYY)
+        - rating, vote_count (might have to divide this by view_count)
         - sub_category (only some have sub_category)
 
 exclusive: -co_authors (there's no specific author)
@@ -106,7 +138,7 @@ def load_wh(WH_FILEPATH):
         print(Category.objects.all().count())
         for entry in data_WH:
             WH_unified = unify("WH",entry)
-            print(WH_unified)
+            #print(WH_unified)
             WH_results.append(WH_unified)
     WH_file.close()
 
@@ -121,7 +153,7 @@ same: category, view_count, url, image, title, project_id
 
 modify:     -publish_date (DATE, contains time and date)
             -raw_text (SUMMARY, choose text )
-            -channel (SUBCATERGORY, has a meaning somewhat between category and sub_category)
+            -channel (SUBCATEGORY, has a meaning somewhat between category and sub_category)
 
 exclusive: comment_count, favourite_count, author, author_id
 
