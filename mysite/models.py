@@ -5,12 +5,11 @@ from django.urls import reverse
 
 class Category(models.Model):
     """Model representing a category"""
-    name = models.CharField(max_length=200, help_text='Article category')
+    name = models.CharField(primary_key=True, max_length=200, help_text='Article category')
 
     @classmethod
     def create(cls, name):
         cls.name = name
-
         return Category
 
     def __str__(self):
@@ -19,12 +18,13 @@ class Category(models.Model):
 
 class Subcat(models.Model):
     """Model representing a sub-category"""
-    name = models.CharField(max_length=200, help_text='Article sub-category')
+    name = models.CharField(primary_key=True,max_length=200, help_text='Article sub-category')
+
     @classmethod
     def create(cls, name):
         cls.name = name
         return Subcat
-        
+
     def __str__(self):
         """String for representing the Model object."""
         return self.name
