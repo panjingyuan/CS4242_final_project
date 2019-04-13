@@ -22,8 +22,6 @@ class Command(BaseCommand):
 
     def _confirm(self, cls, var_name):
         print("Flushing %d %s." % (cls.objects.all().count(), var_name))
-        for item in cls.objects.all():
-            print("-" + str(item))
         ans = input("Are you sure? (y) ")
         return ans == "y"
 
@@ -40,7 +38,7 @@ class Command(BaseCommand):
                 print(item)
 
         if options["all"]:
-            cls.extend([Article, Category, Subcat])
+            cls.extend([Category, Subcat, Article])
         else:
             if options["art"]:
                 cls.append(Article)
@@ -53,7 +51,8 @@ class Command(BaseCommand):
 
 
         for class_to_delete in cls:
-            if class_to_delete.objects.all().count() == 0:
+            counts = class_to_delete.objects.all().count()
+            if counts == 0:
                 print("%s is empty!" % class_to_delete)
             elif self._confirm(class_to_delete, str(class_to_delete)):
                 self._clear(class_to_delete)

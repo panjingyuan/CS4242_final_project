@@ -1,6 +1,7 @@
 import json
 import os, sys
 import django
+from progress.bar import IncrementalBar
 from django.conf import settings
 from django.core.management.base import BaseCommand
 # https://docs.djangoproject.com/en/dev/howto/custom-management-commands/
@@ -32,11 +33,13 @@ class Command(BaseCommand):
         return proc.load_in(filepath)
 
     def _store_wh_data(self, wh_data):
+        skipped = 0
+        bar = IncrementalBar('Saving records', max=len(wh_data))
         for entry in wh_data:
 #            for field in proc.REQUIRED_FIELDS:
 #                assert(entry[field] is not None), ("%s cannot be empty, found:\n%s" % (str(field), str(entry)))
 #               wh_record[field] = entry[field]
-            wh_record = Article(            \
+            wh_record, created = Article.objects.get_or_create(            \
             title = entry["title"],         \
             img = entry["image"],           \
             page_url = entry["url"],        \
@@ -46,7 +49,14 @@ class Command(BaseCommand):
             datetime = entry["date"],       \
             cat = entry["category"])
 #            wh_record.cat = entry["category"]
-            wh_record.save()
+            if not created:
+                wh_record.save()
+            else:
+                skipped += 1
+            bar.next()
+        bar.finish()
+        if skipped:
+            print("Skipped %d duplicate entries." % skipped)
 
     def _make_category(self, name="Example"):
         new_cat = Category(name=name)

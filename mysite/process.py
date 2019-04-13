@@ -1,6 +1,7 @@
 # Package to unify files
 import json
 import os, sys
+from progress.bar import IncrementalBar
 from datetime import datetime as dt
 from mysite.models import Article, Category, Subcat
 
@@ -15,9 +16,9 @@ EXTRA_FIELDS = [
 ]
 
 REQUIRED_FIELDS = []
-
 REQUIRED_FIELDS.extend(SAME_FIELDS)
 REQUIRED_FIELDS.extend(EXTRA_FIELDS)
+
 # TODO:
 # Add function that parses introduction/raw_text
 # and extracts sub_categories from them
@@ -58,8 +59,8 @@ def add_cat(cat_name):
 #       cat_name = input("Enter name of new category: ")
         cat_name = "Uncategorised"
     new_cat, created = Category.objects.get_or_create(pk=cat_name)
-    if created:
-        print("Created category %s" % str(new_cat))
+#    if created:
+#        print("Created category %s" % str(new_cat))
     new_cat.save()
     return new_cat
 
@@ -129,17 +130,19 @@ u'url': u'https://www.wikihow.com/Guess-a-Password', u'project_id': u'555407'}
 '''
 def load_wh(WH_FILEPATH):
     WH_results = []
-
     with open(WH_FILEPATH) as WH_file:
         data_WH = json.load(WH_file)
         values = json.dumps(data_WH, indent=4)
-        print(data_WH[0])
-        print(len(data_WH))
-        print(Category.objects.all().count())
+#        print(data_WH[0])
+#        print(len(data_WH))
+#        print(Category.objects.all().count())
+        bar = IncrementalBar('Reading WH_file: ', max=len(data_WH))
         for entry in data_WH:
             WH_unified = unify("WH",entry)
             #print(WH_unified)
             WH_results.append(WH_unified)
+            bar.next()
+        bar.finish()
     WH_file.close()
 
     return WH_results
