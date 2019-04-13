@@ -39,17 +39,18 @@ class Command(BaseCommand):
             for item in options:
                 print(item)
 
-        if options["art"]:
-            cls.append(Article)
-
-        if options["cat"]:
-            cls.append(Category)
-
-        if options["sub"]:
-            cls.append(Subcat)
-
         if options["all"]:
             cls.extend([Article, Category, Subcat])
+        else:
+            if options["art"]:
+                cls.append(Article)
+
+            if options["cat"]:
+                cls.append(Category)
+
+            if options["sub"]:
+                cls.append(Subcat)
+
 
         for class_to_delete in cls:
             if class_to_delete.objects.all().count() == 0:
