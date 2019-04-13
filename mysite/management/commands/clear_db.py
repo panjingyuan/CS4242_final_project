@@ -11,30 +11,34 @@ from mysite.models import Article, Category, Subcat
 # TODO:
 # Create a way to clear just the articles, cat and subcat
 class Command(BaseCommand):
-    help = 'Clears values in Article, Category and Subcat'
+    help = 'Clears values in Article, Category and Subcat. Doesn\'t touch Users!'
 
     #parser = argparse.ArgumentParser(description='Process some integers.')
     def add_arguments(self, parser):
-        parser.add_argument('--all', action='store_true')
-        parser.add_argument('--art', action='store_true')
-        parser.add_argument('--cat', action='store_true')
-        parser.add_argument('--sub', action='store_true')
+        parser.add_argument('--all', action='store_true', help='clear all tables')
+        parser.add_argument('--art', action='store_true', help='clear all Articles')
+        parser.add_argument('--cat', action='store_true', help='clear all Categories')
+        parser.add_argument('--sub', action='store_true', help='clear all Subcategories')
 
     def _confirm(self, cls, var_name):
         print("Flushing %d %s." % (cls.objects.all().count(), var_name))
         for item in cls.objects.all():
-            print("-" + item)
+            print("-" + str(item))
         ans = input("Are you sure? (y) ")
         return ans == "y"
 
     def _clear(self, cls):
         cls.objects.all().delete()
-        print("Articles flushed.")
+        print("%s flushed." % cls)
 
     def handle(self, *args, **options):
         cls = []
 
-#        print(parser.parse_args(args))
+        if not (options["art"] or options["cat"] or options["sub"] or options["all"]):
+            print("No options given, try --all --art --cat --sub")
+            for item in options:
+                print(item)
+
         if options["art"]:
             cls.append(Article)
 
@@ -48,5 +52,9 @@ class Command(BaseCommand):
             cls.extend([Article, Category, Subcat])
 
         for class_to_delete in cls:
-            if self._confirm(class_to_delete, str(class_to_delete)):
+            if class_to_delete.objects.all().count() == 0:
+                print("%s is empty!" % class_to_delete)
+            elif self._confirm(class_to_delete, str(class_to_delete)):
                 self._clear(class_to_delete)
+            else:
+                print("Deletion of %s" % str(class_to_delete))
