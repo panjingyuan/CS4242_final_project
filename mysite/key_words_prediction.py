@@ -154,10 +154,13 @@ if __name__ == "__main__":
     feature_names=cv.get_feature_names()
     tfidf_transformer=TfidfTransformer(smooth_idf=True,use_idf=True).fit(word_count_vector)
 
+    output_documents=[]
+    for index, document in enumerate(documents):
+        document.update({"keywords": get_key_words(text[index], subjects[index])})
+        output_documents.append(document)
+
     ### add key_words to data and output it
-    with open("/Users/jingyuanpan/CS4242_final_project/data/wikihow_with_keywords.txt", 'a', encoding="utf-8") as fout:
-        for index, document in enumerate(documents):
-            document.update({"keywords": get_key_words(text[index], subjects[index])})
-            fout.write(str(document) + os.linesep)
+    with open("/Users/jingyuanpan/CS4242_final_project/data/wikihow_with_keywords2.txt", 'a', encoding="utf-8") as fout:
+        json.dump(output_documents, fout)
 
 
