@@ -1,0 +1,7 @@
+{% extends "homepage.html" %}
+
+{% block content %}
+  {% include "paginator.html" %}
+  {% block page-content %}{% endblock %}
+  {% include "paginator.html" %}
+{% endblock %}

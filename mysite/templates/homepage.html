@@ -23,16 +23,10 @@
         <a class="btn btn-primary" href="{% url 'articles' %}" role="button">All articles</a>
       </div>
     </div>
-    <div class="row">
-        {% include "paginator.html" %}
-    </div>
     <div class="jumbotron">
         {% block index %}{% endblock %}
         {% block stats %}{% endblock %}
         {% block content %}{% endblock %}
-    </div>
-    <div class="row">
-        {% include "paginator.html" %}
     </div>
 </main>
 {% endblock %}
