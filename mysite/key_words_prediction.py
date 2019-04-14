@@ -122,7 +122,7 @@ def get_key_words(article, title):
 
 if __name__ == "__main__":
 
-    data_file = "/Users/jingyuanpan/CS4242_final_project/data/wikihow.json"
+    data_file = "/Users/jingyuanpan/CS4242_final_project/data/instructables.json"
     porter = nltk.PorterStemmer()
     stops = set(stopwords.words('english'))
 
@@ -133,14 +133,14 @@ if __name__ == "__main__":
 
     with open(data_file, encoding="utf-8") as f:
         for i, line in enumerate(f):
-            if len(line)>2:
+            if len(line)>2 and i<4000:
                 try:
                     article = json.loads(line[:-2])
                 except:
                     article = json.loads(line)
 
-                #flatten_text = ''.join(article['introduction'])
-                flatten_text = article['introduction']
+                flatten_text = ''.join(article['raw_text'])
+                #flatten_text = article['introduction']
                 try:
                     flatten_text = pre_process(flatten_text, porter, stops)
                     text.append(flatten_text)
@@ -160,7 +160,7 @@ if __name__ == "__main__":
         output_documents.append(document)
 
     ### add key_words to data and output it
-    with open("/Users/jingyuanpan/CS4242_final_project/data/wikihow_with_keywords2.txt", 'a', encoding="utf-8") as fout:
+    with open("/Users/jingyuanpan/CS4242_final_project/data/instructables_with_keywords2.txt", 'a', encoding="utf-8") as fout:
         json.dump(output_documents, fout)
 
 
