@@ -1,0 +1,14 @@
+{% extends "homepage.html" %}
+
+{% block index %}
+<head>
+  {% block title %}<title>Home</title>{% endblock %}
+</head>
+<body>
+  <h1>Welcome to<div style="font-size: 6rem; font-weight: 600;">WhatSteps</div></h1>
+  <p class="lead">
+      <p>Using a combination of a web scraper, document classifier and recommendation engine, we intend to recreate the pipeline of a recommendation engine that aggregates information from Instructables and Wikihow. A user who has interests in various forms of how-to projects can use our site in order to receive recommendations for more projects of similar types, search by keywords or even find other users with similar interests.</p>
+      <p>From our project, this can technically be extended, with a bit of manual work on the scraping side to modify the data received, to work as a recommendation engine for any set of data available.</p>
+  </p>
+</body>
+{% endblock %}

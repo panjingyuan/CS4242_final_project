@@ -8,35 +8,26 @@
 
 {% block body_base %}
 <main>
-    <section class="jumbotron">
-        <div class="container">
-            {% include "_messages.html" %}
-            <h1>{% blocktrans %}Welcome to<div style="font-size: 6rem; font-weight: 600;">Project Account</div>{% endblocktrans %}</h1>
-            <p class="lead">
-                {% blocktrans %}
-                In addition to what is provided by Project Zero, this project
-                provides thorough integration with django-user-accounts, adding
-                comprehensive account management functionality. It is a foundation
-                suitable for most sites that have user accounts.
-                {% endblocktrans %}
-            </p>
-            {% if not user.is_authenticated %}
-            {% url "account_login" as login_url %}
-            {% url "account_signup" as signup_url %}
-            <p class="mb-5 lead">{% blocktrans %}You can <a href="{{ login_url }}" class="btn btn-secondary">Log In</a> or <a href="{{ signup_url }}" class="btn btn-primary">Sign Up</a> to try out the site.{% endblocktrans %}</p>
-            {% endif %}
-            <img src="http://pinaxproject.com/pinax-design/tessellations/Project%20Account.png" />
-        </div>
-    </section>
-    <section class="jumbotron">
-        <div class="container">
-            <h1>Kill my face!</h1>
-            <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'users' %}">All users</a></li>
-            {% block stats %}{% endblock %}
-            {% block content %}{% endblock %}
-        </div>
-    </section>
+    <div class="container">
+        {% if not user.is_authenticated %}
+        {% url "account_login" as login_url %}
+        {% url "account_signup" as signup_url %}
+        <p class="mb-5 lead"><a href="{{ login_url }}" class="btn btn-secondary">Log In</a> or <a href="{{ signup_url }}" class="btn btn-primary">Sign Up</a></p>
+        {% endif %}
+    </div>
+    <div class="container">
+      <div class="btn-group btn-group-sm">
+        <a class="btn btn-primary" href="{% url 'home' %}" role="button">Home</a>
+        <a class="btn btn-primary" href="{% url 'stats' %}" role="button">Stats</a>
+        <a class="btn btn-primary" href="{% url 'users' %}" role="button">All users</a>
+        <a class="btn btn-primary" href="{% url 'articles' %}" role="button">All articles</a>
+      </div>
+    </div>
+    <div class="jumbotron">
+        {% block index %}{% endblock %}
+        {% block stats %}{% endblock %}
+        {% block content %}{% endblock %}
+    </div>
     <section id="content-section">
         <div id="content-body">
             <h2 class="text-center">{% blocktrans %}What is Pinax?{% endblocktrans %}</h2>

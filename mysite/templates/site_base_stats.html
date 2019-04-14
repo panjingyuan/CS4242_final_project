@@ -2,15 +2,13 @@
 {% load i18n %}
 
 {% block stats %}
-<button onclick="alert('{{ num_zero }}')">Try it</button>
-
-<h2>Dynamic content</h2>
+<h2>The Current Database</h2>
 <p>Values:</p>
 <ul>
   <li><strong>Articles:</strong> {{ num_articles }}</li>
   <li><strong>Users:</strong> {{ num_users }}</li>
   <li><strong>Super-users:</strong> {{ num_super }}</li>
   <li><strong>Categories:</strong> {{ num_categories }}</li>
-  <li><strong>0:</strong> {{ num_zero }}</li>
+  <li><strong>Subcategories:</strong> {{ num_subcats }}</li>
 </ul>
 {% endblock %}
