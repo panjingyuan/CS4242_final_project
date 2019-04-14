@@ -43,7 +43,7 @@ class UserListView(generic.ListView):
     context_object_name = 'user_list'
     queryset = User.objects.all()
     user_list = User.objects.all()
-    print(queryset)
+    #print(queryset)
     template_name = 'site_base_users.html'  # Specify your own template name/location
 
 class ArticleListView(generic.ListView):
@@ -52,7 +52,7 @@ class ArticleListView(generic.ListView):
     context_object_name = 'articles'
     queryset = Article.objects.all()
     articles = Article.objects.all()
-    print(queryset)
+    #print(queryset)
     template_name = 'site_base_articles.html'  # Specify your own template name/location
 
 class CatListView(generic.ListView):
@@ -61,6 +61,22 @@ class CatListView(generic.ListView):
     context_object_name = 'categories'
     queryset = Category.objects.all()
     categories = Category.objects.all()
-    print(queryset)
+    #print(queryset)
     template_name = 'site_base_cats.html'  # Specify your own template name/location
 
+class CatArtList(generic.ListView):
+    model = Article
+    paginate_by = 10
+    context_object_name = 'articles'
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in the publisher
+        context['category'] = self.category
+        return context
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, name=self.kwargs['category'])
+        return Article.objects.filter(cat=self.category)
+
+    template_name = 'site_base_cat_articles.html'

@@ -5,7 +5,7 @@
   {% if categories %}
   <ul>
     {% for cat in categories %}
-    <li>{{cat}}</li>
+    <li><a href="{% url 'catart' cat.name %}">{{cat}}</a></li>
     {% endfor %}
   </ul>
   {% else %}
