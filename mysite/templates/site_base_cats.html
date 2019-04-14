@@ -1,0 +1,14 @@
+{% extends "site_base_paged.html" %}
+
+{% block page-content %}
+  <h1>Category List</h1>
+  {% if categories %}
+  <ul>
+    {% for cat in categories %}
+    <li>{{cat}}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no categories.</p>
+  {% endif %}
+{% endblock %}

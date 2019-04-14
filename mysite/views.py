@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.views import generic
 
@@ -54,3 +54,13 @@ class ArticleListView(generic.ListView):
     articles = Article.objects.all()
     print(queryset)
     template_name = 'site_base_articles.html'  # Specify your own template name/location
+
+class CatListView(generic.ListView):
+    model = Category
+    paginate_by = 12
+    context_object_name = 'categories'
+    queryset = Category.objects.all()
+    categories = Category.objects.all()
+    print(queryset)
+    template_name = 'site_base_cats.html'  # Specify your own template name/location
+

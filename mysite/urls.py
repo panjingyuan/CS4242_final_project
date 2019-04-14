@@ -13,6 +13,7 @@ urlpatterns = [
 #    path("", TemplateView.as_view(template_name="homepage.html"), name="home"),
     path("users/",views.UserListView.as_view(),name="users"),
     path("articles/",views.ArticleListView.as_view(),name="articles"),
+    path("categories/",views.CatListView.as_view(),name="categories"),
     path("stats/", views.stats, name="stats"),
     path("admin/", admin.site.urls),
     path("account/", include("account.urls")),
