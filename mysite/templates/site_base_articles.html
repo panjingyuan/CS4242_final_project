@@ -27,9 +27,9 @@
                 {% endif %}
               </h5>
               <p>
-                <span class="badge badge-success">{{article.cat}}</span>
+                <span class="badge badge-primary">{{article.cat}}</span>
                 {% for sc in article.subcat.all %}
-                    <span class="badge">{{sc.name}}</span>
+                    <span class="badge badge-default">{{sc.name}}</span>
                 {% endfor %}
               </p>
               <p class="card-text" style = "min-height: 120px">{{article.summary}}</p>
