@@ -44,10 +44,10 @@ class Command(BaseCommand):
                 cls.append(Article)
 
             if options["cat"]:
-                cls.append(Category)
+                cls.append(mysite.Category)
 
             if options["sub"]:
-                cls.append(Subcat)
+                cls.append(mysite.Subcat)
 
 
         for class_to_delete in cls:

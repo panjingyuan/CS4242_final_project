@@ -19,14 +19,13 @@ REQUIRED_FIELDS = []
 REQUIRED_FIELDS.extend(SAME_FIELDS)
 REQUIRED_FIELDS.extend(EXTRA_FIELDS)
 
-# TODO:
-# Add function that parses introduction/raw_text
-# and extracts sub_categories from them
-# https://medium.com/analytics-vidhya/automated-keyword-extraction-from-articles-using-nlp-bfd864f41b34
-# Returns sub_categories as an integer list
-def parse_subcat(text):
-    subcat = []
-    return subcat
+# Returns keywords as subcategories
+def get_subcat(keyword_dict):
+    subcat_list = []
+    for item in list(keyword_dict.keys()):
+        new_sub, created = Subcat.objects.get_or_create(pk=item)
+        subcat_list.append(new_sub)
+    return subcat_list
 
 # Function to shorten a string to
 # the character limit and keep the last word
@@ -59,7 +58,7 @@ def add_cat(cat_name):
 #       cat_name = input("Enter name of new category: ")
         cat_name = "Uncategorised"
     new_cat, created = Category.objects.get_or_create(pk=cat_name)
-#    if created:
+#   if created:
 #        print("Created category %s" % str(new_cat))
     new_cat.save()
     return new_cat
@@ -88,19 +87,14 @@ def unify(site_type, entry):
     if site_type == "WH":
         fields_obj["summary"] = entry["introduction"]
         fields_obj["date"] = wh_date(entry["publish_date"])
-        #find sub_categories if they exist
         fields_obj["sub_categories"] = []
-        sub_categories = parse_subcat(entry["introduction"])
-        if entry["sub_category"]:
-            fields_obj["sub_categories"].extend(entry["sub_category"])
-        fields_obj["sub_categories"].extend(sub_categories)
+        fields_obj["sub_categories"].extend(get_subcat(entry["keywords"]))
     #If this is an Instructables article
     else:
         fields_obj["summary"] = shorten(''.join(entry["raw_text"]))
         fields_obj["date"] = in_date(entry["publish_date"])
-        sub_categories.append(entry["channel"])
-        sub_categories.extend(parse_subcat(entry["raw_text"]))
-        fields_obj["sub_categories"] = sub_categories
+        fields_obj["sub_categories"] = []
+        fields_obj["sub_categories"].extend(get_subcat(entry["keywords"]))
 
     return fields_obj
 
@@ -178,7 +172,6 @@ def load_in(IN_FILEPATH):
 
     with open(IN_FILEPATH) as IN_file:
         data_IN = json.load(IN_file)
-        values = json.dumps(data_IN, indent=4)
         print(data_IN[0])
         print(len(data_IN))
         print(Category.objects.all().count())
