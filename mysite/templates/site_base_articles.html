@@ -27,7 +27,11 @@
                 {% endif %}
               </h5>
               <p>
-                <span class="badge badge-primary">{{article.cat}}</span>
+                <a href="{% url 'catart' article.cat.name %}">
+                  <span class="badge badge-primary">
+                    {{article.cat}}
+                  </span>
+                </a>
                 <span class="badge badge-warning">{{article.subcat}}</span>
                 {% for kw in article.keyword.all %}
                     <span class="badge badge-default">{{kw.name}}</span>

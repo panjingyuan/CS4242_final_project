@@ -37,9 +37,19 @@ def stats(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'site_base_stats.html', context=context)
 
+def profile(request, pk):
+    """View function for profile."""
+
+    profile = get_object_or_404(Profile, pk=pk)
+    context = {
+        'profile': profile
+    }
+    # Render the HTML template index.html with the data in the context variable
+    return render(request, 'site_base_userdetail.html', context=context)
+
 class UserListView(generic.ListView):
     model = Profile
-    paginate_by = 10
+    paginate_by = 20
     context_object_name = 'user_list'
     queryset = Profile.objects.all()
     user_list = Profile.objects.all()

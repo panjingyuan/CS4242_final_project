@@ -1,22 +1,14 @@
 {% extends "site_base_paged.html" %}
 
 {% block page-content %}
-  <h1>Article List</h1>
+  <h1>{{category}} List</h1>
   {% if articles %}
   <ul>
     {% for article in articles %}
       <div class="card mb-3" style="max-width: 1000px;">
         <div class="row no-gutters">
           <div class="col-md-4">
-            {% if article.img %}
-              <img src="{{ article.img }}" class="card-img" alt="{{article.title}}">
-            {% else %}
-              {% if article.sitetype == "WH" %}
-                <img src="https://www.wikihow.com/skins/WikiHow/images/wikihow_large.jpg" class="card-img" alt="{{article.title}}">
-              {% else %}
-                <img src="https://www.instructables.com/assets/img/instructables-logo.png" class="card-img" alt="{{article.title}}">
-              {% endif %}
-            {% endif %}
+            <img src="{{article.img}}" class="card-img" alt="{{article.title}}">
           </div>
           <div class="col-md-8">
             <div class="card-body">
@@ -36,8 +28,9 @@
               </h5>
               <p>
                 <span class="badge badge-primary">{{article.cat}}</span>
-                {% for sc in article.subcat.all %}
-                    <span class="badge badge-default">{{sc.name}}</span>
+                <span class="badge badge-warning">{{article.subcat}}</span>
+                {% for kw in article.keyword.all %}
+                    <span class="badge badge-default">{{kw.name}}</span>
                 {% endfor %}
               </p>
               <p class="card-text" style = "min-height: 120px">{{article.summary}}</p>

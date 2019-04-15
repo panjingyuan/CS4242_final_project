@@ -6,7 +6,9 @@
   <ul>
     {% for user in user_list %}
         <li>
-          {{user}}
+          <a href="{% url 'profile' user.name %}">
+            {{user}}
+          </a>
         </li>
     {% endfor %}
   </ul>
