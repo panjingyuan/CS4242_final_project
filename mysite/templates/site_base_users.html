@@ -6,21 +6,7 @@
   <ul>
     {% for user in user_list %}
         <li>
-          {% if user.is_superuser %}
-            <strong>
-            {% if user.is_staff %}
-              <em>{{ user }}</em>
-            {% else %}
-              {{ user }}
-            {% endif %}
-            </strong>
-          {% else %}
-            {% if user.is_staff %}
-              <em>{{ user }}</em>
-            {% else %}
-              {{ user }}
-            {% endif %}
-          {% endif %}
+          {{user}}
         </li>
     {% endfor %}
   </ul>

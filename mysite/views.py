@@ -38,11 +38,11 @@ def stats(request):
     return render(request, 'site_base_stats.html', context=context)
 
 class UserListView(generic.ListView):
-    model = User
+    model = Profile
     paginate_by = 10
     context_object_name = 'user_list'
-    queryset = User.objects.all()
-    user_list = User.objects.all()
+    queryset = Profile.objects.all()
+    user_list = Profile.objects.all()
     #print(queryset)
     template_name = 'site_base_users.html'  # Specify your own template name/location
 

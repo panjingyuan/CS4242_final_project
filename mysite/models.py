@@ -107,7 +107,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.name
 
-    def last_view(self, article):
+    def _add_view(self, article):
         modulo = self.view_count % 5 + 1
         if modulo == 1:
             self.viewedOne = article
@@ -119,11 +119,13 @@ class Profile(models.Model):
             self.viewedFour = article
         else:
             self.viewedFive = article
+        self.view_count += 1
 
     def get_all_keywords(self):
         view_list = [self.viewedOne, self.viewedTwo, self.viewedThree, self.viewedFour, self.viewedFive]
         keywords = []
         for item in view_list:
             if item:
-                keywords.extend(item["subcat"])
+                for keyword in item["keyword"]:
+                    keywords.extend(keyword)
         return keywords
