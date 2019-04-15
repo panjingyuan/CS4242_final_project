@@ -2,6 +2,10 @@
 # https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Models
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 class Category(models.Model):
     """Model representing a category"""
@@ -35,6 +39,23 @@ class Subcat(models.Model):
         """String for representing the Model object."""
         return self.name
 
+class Keyword(models.Model):
+    """Model representing a keyword"""
+    name = models.CharField(primary_key=True,max_length=200, help_text='Keywords')
+
+    @classmethod
+    def create(cls, name):
+        cls.name = name
+        return Keyword
+
+    class Meta:
+        verbose_name_plural = "keywords"
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.name
+
+
 class Article(models.Model):
     """Model representing a specific article."""
     #the url is the key for the article
@@ -59,7 +80,8 @@ class Article(models.Model):
 
     # categories
     cat = models.ForeignKey(Category, on_delete=models.SET_NULL, help_text='Category this article is related to', null = True)
-    subcat = models.ManyToManyField(Subcat, help_text='Subcategories this article is related to')
+    subcat = models.ForeignKey(Subcat, on_delete=models.SET_NULL, help_text='Subcategories this article is related to', null = True)
+    keyword = models.ManyToManyField(Keyword, help_text='Keywords this article is related to')
 
     class Meta:
         ordering = ['-datetime']
@@ -71,3 +93,47 @@ class Article(models.Model):
     def get_absolute_url(self):
         """Returns the url to access a detail record for this book."""
         return reverse('article-detail', args=[str(self.id)])
+
+class Profile(models.Model):
+    """Model representing a user"""
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    view_count = models.IntegerField(help_text='the number of articles this user has viewed', default = 0)
+    viewedOne = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last1")
+    viewedTwo = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last2")
+    viewedThree = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last3")
+    viewedFour = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last4")
+    viewedFive = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last5")
+
+    def __str__(self):
+        return self.user.username
+
+    def last_view(self, article):
+        modulo = self.view_count % 5 + 1
+        if modulo == 1:
+            self.viewedOne = article
+        elif modulo == 2:
+            self.viewedTwo = article
+        elif modulo == 3:
+            self.viewedThree = article
+        elif modulo == 4:
+            self.viewedFour = article
+        else:
+            self.viewedFive = article
+
+    def get_all_keywords(self):
+        view_list = [self.viewedOne, self.viewedTwo, self.viewedThree, self.viewedFour, self.viewedFive]
+        keywords = []
+        for item in view_list:
+            if item:
+                keywords.extend(item["subcat"])
+        return keywords
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

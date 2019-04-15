@@ -50,15 +50,16 @@ class Command(BaseCommand):
             sitetype = entry["site_type"],  \
             summary = entry["summary"],     \
             datetime = entry["date"],       \
-            cat = entry["category"])
+            cat = entry["category"],        \
+            subcat = entry["sub_category"])
 
             if not created:
                 wh_record.save()
             else:
                 skipped += 1
 
-            for subcat in entry["sub_categories"]:
-                subcat.article_set.add(wh_record)
+            for kw in entry["keywords"]:
+                kw.article_set.add(wh_record)
 
             bar.next()
         bar.finish()

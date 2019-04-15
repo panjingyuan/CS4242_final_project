@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 # https://docs.djangoproject.com/en/dev/howto/custom-management-commands/
 # !! https://eli.thegreenplace.net/2014/02/15/programmatically-populating-a-django-database
 import argparse
-from mysite.models import Article, Category, Subcat
+from mysite.models import Article, Category, Subcat, Keyword
 
 # TODO:
 # Create a way to clear just the articles, cat and subcat
@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 print(item)
 
         if options["all"]:
-            cls.extend([Category, Subcat, Article])
+            cls.extend([Category, Subcat, Article, Keyword])
         else:
             if options["art"]:
                 cls.append(Article)

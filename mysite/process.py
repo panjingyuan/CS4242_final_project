@@ -3,7 +3,7 @@ import json
 import os, sys
 from progress.bar import IncrementalBar
 from datetime import datetime as dt
-from mysite.models import Article, Category, Subcat
+from mysite.models import Article, Category, Subcat, Keyword
 
 SAME_FIELDS =  ["category", "view_count", "url",
                 "image", "title", "project_id"]
@@ -12,20 +12,23 @@ EXTRA_FIELDS = [
     "site_type",
     "summary",
     "date",
-    "sub_categories"
+    "sub_category",
+    "keywords"
 ]
+
+MAX_ENTRIES = 500
 
 REQUIRED_FIELDS = []
 REQUIRED_FIELDS.extend(SAME_FIELDS)
 REQUIRED_FIELDS.extend(EXTRA_FIELDS)
 
-# Returns keywords as subcategories
-def get_subcat(keyword_dict):
-    subcat_list = []
-    for item in list(keyword_dict.keys()):
-        new_sub, created = Subcat.objects.get_or_create(pk=item)
-        subcat_list.append(new_sub)
-    return subcat_list
+# Returns keywords
+def get_kw(kw_dict):
+    kw_list = []
+    for item in list(kw_dict.keys()):
+        new_kw, created = Keyword.objects.get_or_create(pk=item)
+        kw_list.append(new_kw)
+    return kw_list
 
 # Function to shorten a string to
 # the character limit and keep the last word
@@ -63,6 +66,16 @@ def add_cat(cat_name):
     new_cat.save()
     return new_cat
 
+def add_sc(cat_name):
+    if (not cat_name == None) and (not cat_name == "None"):
+        new_sc, created = Subcat.objects.get_or_create(pk=cat_name)
+        if created:
+            print("created %s" % cat_name)
+            new_sc.save()
+        return new_sc
+    else:
+        return None
+
 # Receives a JSON entry
 # based on the field it encounters,
 # modifies and outputs the data in a unified format.
@@ -87,14 +100,15 @@ def unify(site_type, entry):
     if site_type == "WH":
         fields_obj["summary"] = entry["introduction"]
         fields_obj["date"] = wh_date(entry["publish_date"])
-        fields_obj["sub_categories"] = []
-        fields_obj["sub_categories"].extend(get_subcat(entry["keywords"]))
+        fields_obj["sub_category"] = add_sc(entry["sub_category"])
+        fields_obj["keywords"] = []
+        fields_obj["keywords"].extend(get_kw(entry["keywords"]))
     #If this is an Instructables article
     else:
         fields_obj["summary"] = shorten(''.join(entry["raw_text"]))
         fields_obj["date"] = in_date(entry["publish_date"])
-        fields_obj["sub_categories"] = []
-        fields_obj["sub_categories"].extend(get_subcat(entry["keywords"]))
+        fields_obj["sub_category"] = add_sc(entry["sub_category"])
+        fields_obj["keywords"].extend(get_kw(entry["keywords"]))
 
     return fields_obj
 
@@ -126,16 +140,19 @@ def load_wh(WH_FILEPATH):
     WH_results = []
     with open(WH_FILEPATH) as WH_file:
         data_WH = json.load(WH_file)
-        values = json.dumps(data_WH, indent=4)
+        count = 0
 #        print(data_WH[0])
 #        print(len(data_WH))
 #        print(Category.objects.all().count())
         bar = IncrementalBar('Reading WH_file: ', max=len(data_WH))
         for entry in data_WH:
+            count += 1
             WH_unified = unify("WH",entry)
             #print(WH_unified)
             WH_results.append(WH_unified)
             bar.next()
+            if count > MAX_ENTRIES:
+                break
         bar.finish()
     WH_file.close()
 
@@ -169,6 +186,7 @@ u'channel': u'Electronics'}
 '''
 def load_in(IN_FILEPATH):
     IN_results = []
+    count = 0
 
     with open(IN_FILEPATH) as IN_file:
         data_IN = json.load(IN_file)
@@ -176,9 +194,12 @@ def load_in(IN_FILEPATH):
         print(len(data_IN))
         print(Category.objects.all().count())
         for entry in data_IN:
+            count += 1
             IN_unified = unify("IN",entry)
             print(IN_unified)
             IN_results.append(IN_unified)
+            if count > MAX_ENTRIES:
+                break
     IN_file.close()
 
     return IN_results

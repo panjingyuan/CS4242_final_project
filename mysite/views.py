@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.views import generic
 
-from mysite.models import Article, Category, Subcat
+from mysite.models import Article, Category, Subcat, Profile
 
 def index(request):
     """View function for index"""
@@ -14,7 +14,7 @@ def stats(request):
 
     # Generate counts of some of the main objects
     num_articles = Article.objects.all().count()
-    users = User.objects.all()
+    users = Profile.objects.all()
     num_users = users.count()
     num_super = 0
     for item in users:

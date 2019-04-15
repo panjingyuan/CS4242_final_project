@@ -28,8 +28,9 @@
               </h5>
               <p>
                 <span class="badge badge-primary">{{article.cat}}</span>
-                {% for sc in article.subcat.all %}
-                    <span class="badge badge-default">{{sc.name}}</span>
+                <span class="badge badge-warning">{{article.subcat}}</span>
+                {% for kw in article.keyword.all %}
+                    <span class="badge badge-default">{{kw.name}}</span>
                 {% endfor %}
               </p>
               <p class="card-text" style = "min-height: 120px">{{article.summary}}</p>
