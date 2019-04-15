@@ -12,6 +12,9 @@ class Category(models.Model):
         cls.name = name
         return Category
 
+    class Meta:
+        verbose_name_plural = "categories"
+
     def __str__(self):
         """String for representing the Model object."""
         return self.name
@@ -24,6 +27,9 @@ class Subcat(models.Model):
     def create(cls, name):
         cls.name = name
         return Subcat
+
+    class Meta:
+        verbose_name_plural = "subcategories"
 
     def __str__(self):
         """String for representing the Model object."""
