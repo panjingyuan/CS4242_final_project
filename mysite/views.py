@@ -47,6 +47,16 @@ def profile(request, pk):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'site_base_userdetail.html', context=context)
 
+def article(request, pk):
+    """View function for articles."""
+
+    profile = get_object_or_404(Article, pk=pk)
+    context = {
+        'article': article
+    }
+    # Render the HTML template index.html with the data in the context variable
+    return render(request, 'site_base_articledetail.html', context=context)
+
 class UserListView(generic.ListView):
     model = Profile
     paginate_by = 20

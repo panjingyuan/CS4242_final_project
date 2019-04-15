@@ -1,0 +1,19 @@
+{% extends "site_base_paged.html" %}
+
+{% block page-content %}
+  <h1>
+    {{article}}
+    {% if article.sitetype == "WH" %}
+    <span class="badge badge-success">
+      WikiHow
+    </span>
+    {% else %}
+    <span class="badge badge-warning">
+      Instructables
+    </span>
+    {% endif %}
+  </h1>
+  <h2>Keywords</h2>
+    <ul>
+    </ul>
+{% endblock %}

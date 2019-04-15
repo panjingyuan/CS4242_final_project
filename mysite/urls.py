@@ -19,6 +19,7 @@ urlpatterns = [
     path("account/", include("account.urls")),
     path("articles/<category>", views.CatArtList.as_view(), name= "catart"),
     path("users/<str:pk>", views.profile, name= "profile"),
+    path("articles/<str:pk>", views.article, name= "article"),
     path("search", views.QueryList.as_view(), name= "search")
 ]
 

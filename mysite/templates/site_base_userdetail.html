@@ -4,7 +4,11 @@
   <h1>{{profile}} - <span class="badge badge-primary">{{profile.view_count}}</span></h1>
   <h2>Last Viewed</h2>
     <ul>
-      <li>{{profile.viewedOne}}</li>
+      <li>
+        <a href="{% url 'article' profile.viewedOne.pk %}">
+          {{profile.viewedOne}}
+        </a>
+      </li>
       <li>{{profile.viewedTwo}}</li
       <li>{{profile.viewedThree}}</li>
       <li>{{profile.viewedFour}}</li>

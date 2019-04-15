@@ -59,7 +59,8 @@ class Keyword(models.Model):
 class Article(models.Model):
     """Model representing a specific article."""
     #the url is the key for the article
-    page_url = models.URLField(primary_key = True, help_text='Link to Article', null = False)
+    id = models.AutoField(primary_key=True)
+    page_url = models.URLField(help_text='Link to Article', null = False)
 
     # Meta
     title = models.CharField(max_length=200, help_text='Article name')
@@ -91,8 +92,8 @@ class Article(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        """Returns the url to access a detail record for this book."""
-        return reverse('article-detail', args=[str(self.id)])
+        """Returns the url to access a detail record for this article."""
+        return reverse('article-detail', args=[str(self.pk)])
 
 class Profile(models.Model):
     """Model representing a profile"""
