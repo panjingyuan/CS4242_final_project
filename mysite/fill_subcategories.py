@@ -5,6 +5,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sklearn.naive_bayes import MultinomialNB
 import numpy as np
+from sklearn.metrics import classification_report, precision_score, recall_score, f1_score
+from sklearn.model_selection import KFold
+from sklearn import linear_model
+from sklearn.model_selection import GridSearchCV
 
 def get_keywords(dic):
     output=[]
@@ -75,8 +79,45 @@ if __name__ == "__main__":
     x_train = np.array(merged_x[merged_x['sub_category'].notnull()].drop(['id', 'sub_category', 'text'], axis=1))
     x_test = np.array(merged_x[merged_x['sub_category'].isnull()].drop(['id', 'sub_category', 'text'], axis=1))
 
-    model_NB = MultinomialNB().fit(x_train, y_train)
-    predicts = model_NB.predict(x_test)
+    # param_grid={
+    #     'alpha':[0.0006, 0.0007, 0.0008],
+    #     'epsilon': [0.002, 0.003, 0.004],
+    #     'l1_ratio': [0.7, 0.8, 0.9]
+    # }
+    #
+    # grid_search = GridSearchCV(estimator=linear_model.SGDClassifier(loss='hinge', alpha=0.0007, max_iter=1000, epsilon=0.002, tol=0.1, l1_ratio=0.8, penalty='l2'),param_grid=param_grid, scoring=None, n_jobs=-1, iid=False, cv=10)
+    # grid_search.fit(merged_x[merged_x['sub_category'].notnull()].drop(['id', 'sub_category', 'text'], axis=1), y)
+    # print(grid_search.best_estimator_, grid_search.best_params_, grid_search.best_score_)
+
+
+
+
+    kf = KFold(n_splits=10)
+    avg_p = 0
+    avg_r = 0
+    avg_f1 = 0
+
+    for train, test in kf.split(x_train):
+
+        # model_NB = MultinomialNB().fit(x_train[train], y_train[train])
+        # predicts = model_NB.predict(x_train[test])
+
+        model_SVM = linear_model.SGDClassifier(loss='hinge', alpha=0.0007, max_iter=1000, epsilon=0.002, tol=0.1, l1_ratio=0.8, penalty='l2').fit(x_train[train], y_train[train])
+        predicts = model_SVM.predict(x_train[test])
+
+
+        avg_p += precision_score(y_train[test], predicts, average='macro')
+        avg_r += recall_score(y_train[test], predicts, average='macro')
+        avg_f1 += f1_score(y_train[test], predicts, average='macro')
+
+    average_precision = avg_p / 10.0
+    average_recall = avg_r / 10.0
+    average_f1_score = avg_f1 / 10.0
+    print('Average Precision is %f.' % average_precision)
+    print('Average Recall is %f.' % average_recall)
+    print('Average F1 is %f' % average_f1_score)
+
+
     result = pd.concat([data[data['sub_category'].isnull()].reset_index(drop=True), pd.DataFrame(predicts)], axis=1, ignore_index=True)
     result.drop(1, axis=1, inplace=True)
     result = result.rename({0: 'project_id', 2: 'category', 3: 'predicted_number'}, axis=1)
@@ -96,7 +137,7 @@ if __name__ == "__main__":
         output_articles.append(article)
 
     ### add key_words to data and output it
-    with open("/Users/jingyuanpan/CS4242_final_project/data/wikihow_predicted_subcategories.txt", 'a', encoding="utf-8") as fout:
+    with open("/Users/jingyuanpan/CS4242_final_project/data/wikihow_predicted_subcategories2.txt", 'a', encoding="utf-8") as fout:
         json.dump(output_articles, fout)
 
 
