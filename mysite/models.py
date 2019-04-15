@@ -97,7 +97,7 @@ class Article(models.Model):
 class Profile(models.Model):
     """Model representing a user"""
     id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length = 80, help_text = 'User name', default = "Unnamed", null = False)
     view_count = models.IntegerField(help_text='the number of articles this user has viewed', default = 0)
     viewedOne = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last1")
     viewedTwo = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last2")
@@ -106,7 +106,7 @@ class Profile(models.Model):
     viewedFive = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last5")
 
     def __str__(self):
-        return self.user.username
+        return self.name
 
     def last_view(self, article):
         modulo = self.view_count % 5 + 1
@@ -128,12 +128,3 @@ class Profile(models.Model):
             if item:
                 keywords.extend(item["subcat"])
         return keywords
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()

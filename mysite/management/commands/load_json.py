@@ -66,6 +66,38 @@ class Command(BaseCommand):
         if skipped:
             print("Skipped %d duplicate entries." % skipped)
 
+    def _store_in_data(self, in_data):
+        skipped = 0
+        bar = IncrementalBar('Saving records', max=len(in_data))
+        for entry in in_data:
+#            for field in proc.REQUIRED_FIELDS:
+#                assert(entry[field] is not None), ("%s cannot be empty, found:\n%s" % (str(field), str(entry)))
+#               wh_record[field] = entry[field]
+            if entry["title"] is not None:
+                in_record, created = Article.objects.get_or_create(            \
+                title = entry["title"],         \
+                img = entry["image"],           \
+                page_url = entry["url"],        \
+                views = entry["view_count"],    \
+                sitetype = entry["site_type"],  \
+                summary = entry["summary"],     \
+                datetime = entry["date"],       \
+                cat = entry["category"])
+
+            if not created:
+                in_record.save()
+            else:
+                skipped += 1
+
+            for kw in entry["keywords"]:
+                kw.article_set.add(in_record)
+
+            bar.next()
+        bar.finish()
+        if skipped:
+            print("Skipped %d duplicate entries." % skipped)
+
+
     def _make_category(self, name="Example"):
         new_cat = Category(name=name)
         new_cat.save()
@@ -116,6 +148,7 @@ class Command(BaseCommand):
         ART_NAME = "Article"
         CAT_NAME = "Category"
         SUB_NAME = "Subcat"
+        KW_NAME = "Keyword"
 
 #        print(parser.parse_args(args))
         if options["where"]:
@@ -135,6 +168,7 @@ class Command(BaseCommand):
             print("Loading from " + IN_FILENAME + ": ")
             IN_data = self._get_in_file(DIR_NAME+IN_FILENAME)
             print("%d records found for %s" % (len(IN_data),IN_FILENAME))
+            self._store_in_data(IN_data)
         elif options["convert_ast"]:
             print("Converting wikihow.txt:")
             self._conv(DIR_NAME+"wikihow.txt",DIR_NAME)

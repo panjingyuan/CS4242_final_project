@@ -16,7 +16,7 @@ EXTRA_FIELDS = [
     "keywords"
 ]
 
-MAX_ENTRIES = 500
+MAX_ENTRIES = 1000
 
 REQUIRED_FIELDS = []
 REQUIRED_FIELDS.extend(SAME_FIELDS)
@@ -107,7 +107,7 @@ def unify(site_type, entry):
     else:
         fields_obj["summary"] = shorten(''.join(entry["raw_text"]))
         fields_obj["date"] = in_date(entry["publish_date"])
-        fields_obj["sub_category"] = add_sc(entry["sub_category"])
+        fields_obj["keywords"] = []
         fields_obj["keywords"].extend(get_kw(entry["keywords"]))
 
     return fields_obj
@@ -141,9 +141,6 @@ def load_wh(WH_FILEPATH):
     with open(WH_FILEPATH) as WH_file:
         data_WH = json.load(WH_file)
         count = 0
-#        print(data_WH[0])
-#        print(len(data_WH))
-#        print(Category.objects.all().count())
         bar = IncrementalBar('Reading WH_file: ', max=len(data_WH))
         for entry in data_WH:
             count += 1
@@ -190,16 +187,15 @@ def load_in(IN_FILEPATH):
 
     with open(IN_FILEPATH) as IN_file:
         data_IN = json.load(IN_file)
-        print(data_IN[0])
-        print(len(data_IN))
-        print(Category.objects.all().count())
+        bar = IncrementalBar('Reading IN_file: ', max=len(data_IN))
         for entry in data_IN:
             count += 1
             IN_unified = unify("IN",entry)
-            print(IN_unified)
             IN_results.append(IN_unified)
+            bar.next()
             if count > MAX_ENTRIES:
                 break
+        bar.finish()
     IN_file.close()
 
     return IN_results
