@@ -17,7 +17,8 @@ urlpatterns = [
     path("stats/", views.stats, name="stats"),
     path("admin/", admin.site.urls),
     path("account/", include("account.urls")),
-    path("articles/<category>", views.CatArtList.as_view(), name= "catart")
+    path("articles/<category>", views.CatArtList.as_view(), name= "catart"),
+    path("search", views.QueryList.as_view(), name= "search")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

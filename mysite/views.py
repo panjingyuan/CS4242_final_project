@@ -80,3 +80,9 @@ class CatArtList(generic.ListView):
         return Article.objects.filter(cat=self.category)
 
     template_name = 'site_base_cat_articles.html'
+
+class QueryList(generic.ListView):
+    model = Article
+    paginate_by = 10
+    context_object_name = 'articles'
+    template_name = 'site_base_search.html'
