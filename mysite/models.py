@@ -95,9 +95,8 @@ class Article(models.Model):
         return reverse('article-detail', args=[str(self.id)])
 
 class Profile(models.Model):
-    """Model representing a user"""
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length = 80, help_text = 'User name', default = "Unnamed", null = False)
+    """Model representing a profile"""
+    name = models.CharField(primary_key = True, max_length = 80, help_text = 'User name', default = "Unnamed", null = False)
     view_count = models.IntegerField(help_text='the number of articles this user has viewed', default = 0)
     viewedOne = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last1")
     viewedTwo = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name="Last2")
