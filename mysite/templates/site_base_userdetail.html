@@ -1,7 +1,15 @@
 {% extends "site_base_paged.html" %}
 
+{% block head_title %}{{profile}}'s Profile{% endblock %}
+
 {% block page-content %}
   <h1>{{profile}} - <span class="badge badge-primary">Viewed {{profile.view_count}} articles</span></h1>
+  <h2>is interested in:</h2>
+    {% include 'site_base_keywordcard.html' with article=profile.viewedOne %}
+    {% include 'site_base_keywordcard.html' with article=profile.viewedTwo %}
+    {% include 'site_base_keywordcard.html' with article=profile.viewedThree %}
+    {% include 'site_base_keywordcard.html' with article=profile.viewedFour %}
+    {% include 'site_base_keywordcard.html' with article=profile.viewedFive %}
   <h2>Last Viewed</h2>
     <ul>
       <li>

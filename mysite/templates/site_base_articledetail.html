@@ -23,13 +23,12 @@
       <div class="col-md-8">
         <div class="card-body">
           <p>
+            <span class="badge badge-secondary">{{article.pk}}</span>
             <a href="{% url 'catart' article.cat%}">
               <span class="badge badge-primary">{{article.cat}}</span>
             </a>
             <span class="badge badge-warning">{{article.subcat}}</span>
-            {% for kw in article.keyword.all %}
-                <span class="badge badge-default">{{kw.name}}</span>
-            {% endfor %}
+            {% include "site_base_keywordcard.html" with article=article%}
           </p>
           <p class="card-text" style = "min-height: 120px">{{article.summary}}</p>
           <p class="card-text">
