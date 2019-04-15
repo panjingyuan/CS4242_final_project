@@ -8,8 +8,9 @@ from django.core.management.base import BaseCommand
 # https://docs.djangoproject.com/en/dev/howto/custom-management-commands/
 # !! https://eli.thegreenplace.net/2014/02/15/programmatically-populating-a-django-database
 import argparse
-from mysite.models import Article, Category, Subcat
+from mysite.models import Article, Category, Subcat, Profile
 import mysite.process as proc
+import random
 
 # TODO:
 # Create a way to read the related .json files
@@ -28,12 +29,44 @@ class Command(BaseCommand):
         parser.add_argument('--shrink_in', action='store_true', help='shrinks instructables.json')
         parser.add_argument('--store_all', action='store_true', help='loads both wikihow.json and instructables.json')
         parser.add_argument('--convert_ast', action='store_true', help='converts txt to json')
+        parser.add_argument('--gen_profiles', action='store_true', help='creates fake profiles! run after loading json')
+
+    def _get_names(self, filepath):
+        namelist = []
+        with open(filepath) as name_file:
+            namelist = name_file.readlines()
+        namelist = [name.rstrip() for name in namelist]
+        return namelist
 
     def _get_wh_file(self, filepath):
         return proc.load_wh(filepath)
 
     def _get_in_file(self, filepath):
         return proc.load_in(filepath)
+
+    def _store_name_data(self, namelist):
+        skipped = 0
+        bar = IncrementalBar('Creating profiles', max=len(namelist))
+        for name in namelist:
+            name_record, created = Profile.objects.get_or_create(name = name)
+            if created:
+                articles = Article.objects.all()
+                random_articles = random.sample(list(articles),5)
+                name_record.view_count = random.randrange(5,articles.count())
+                name_record.viewedOne = random_articles[0]
+                name_record.viewedTwo = random_articles[1]
+                name_record.viewedThree = random_articles[2]
+                name_record.viewedFour = random_articles[3]
+                name_record.viewedFive = random_articles[4]
+                name_record.save()
+            else:
+                skipped += 1
+
+            bar.next()
+        bar.finish()
+        if skipped:
+            print("Skipped %d duplicate entries." % skipped)
+
 
     def _store_wh_data(self, wh_data):
         skipped = 0
@@ -177,3 +210,8 @@ class Command(BaseCommand):
         elif options["shrink_in"]:
             print("Shrinking instructables_large.json: ")
             self._shrink(DIR_NAME + "instructables_large.json", DIR_NAME + IN_FILENAME)
+        elif options["gen_profiles"]:
+            print("Generating profiles: ")
+            namelist = self._get_names(DIR_NAME+"names.txt")
+            print(namelist)
+            self._store_name_data(namelist)
