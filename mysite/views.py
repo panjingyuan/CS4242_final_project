@@ -16,11 +16,6 @@ def stats(request):
     num_articles = Article.objects.all().count()
     users = Profile.objects.all()
     num_users = users.count()
-    num_super = 0
-    for item in users:
-        print(item)
-        if item.is_superuser:
-            num_super += 1
     num_categories = Category.objects.all().count()
     num_subcats = Subcat.objects.all().count()
     num_zero = 0
@@ -29,7 +24,6 @@ def stats(request):
     context = {
         'num_articles': num_articles,
         'num_users': num_users,
-        'num_super': num_super,
         'num_categories': num_categories,
         'num_subcats': num_subcats,
         'num_zero': num_zero,
@@ -50,7 +44,7 @@ def profile(request, pk):
 def article(request, pk):
     """View function for articles."""
 
-    profile = get_object_or_404(Article, pk=pk)
+    article = get_object_or_404(Article, pk=pk)
     context = {
         'article': article
     }

@@ -2,7 +2,7 @@
 
 {% block page-content %}
   <h1>
-    {{article}}
+    {{article.title}}
     {% if article.sitetype == "WH" %}
     <span class="badge badge-success">
       WikiHow
@@ -13,7 +13,32 @@
     </span>
     {% endif %}
   </h1>
-  <h2>Keywords</h2>
-    <ul>
-    </ul>
+  <div class="card mb-3" style="max-width: 1000px;">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        <a href="{{article.page_url}}">
+        <img src="{{article.img}}" class="card-img" alt="{{article.title}}">
+        </a>
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <p>
+            <a href="{% url 'catart' article.cat%}">
+              <span class="badge badge-primary">{{article.cat}}</span>
+            </a>
+            <span class="badge badge-warning">{{article.subcat}}</span>
+            {% for kw in article.keyword.all %}
+                <span class="badge badge-default">{{kw.name}}</span>
+            {% endfor %}
+          </p>
+          <p class="card-text" style = "min-height: 120px">{{article.summary}}</p>
+          <p class="card-text">
+            <small class="text-muted">
+              {{article.datetime.date}}
+            </small>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

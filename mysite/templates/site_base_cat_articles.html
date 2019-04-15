@@ -13,7 +13,7 @@
           <div class="col-md-8">
             <div class="card-body">
               <h5 class="card-title">
-                <a href="{{article.page_url}}">
+                <a href="{% url 'article' article.pk %}">
                   {{article}}
                 </a>
                 {% if article.sitetype == "WH" %}

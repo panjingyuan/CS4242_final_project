@@ -1,7 +1,7 @@
 {% extends "site_base_paged.html" %}
 
 {% block page-content %}
-  <h1>{{profile}} - <span class="badge badge-primary">{{profile.view_count}}</span></h1>
+  <h1>{{profile}} - <span class="badge badge-primary">Viewed {{profile.view_count}} articles</span></h1>
   <h2>Last Viewed</h2>
     <ul>
       <li>
@@ -9,9 +9,25 @@
           {{profile.viewedOne}}
         </a>
       </li>
-      <li>{{profile.viewedTwo}}</li
-      <li>{{profile.viewedThree}}</li>
-      <li>{{profile.viewedFour}}</li>
-      <li>{{profile.viewedFive}}</li>
+      <li>
+        <a href="{% url 'article' profile.viewedTwo.pk %}">
+          {{profile.viewedTwo}}
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'article' profile.viewedThree.pk %}">
+          {{profile.viewedThree}}
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'article' profile.viewedFour.pk %}">
+          {{profile.viewedFour}}
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'article' profile.viewedFive.pk %}">
+          {{profile.viewedFive}}
+        </a>
+      </li>
     </ul>
 {% endblock %}

@@ -86,7 +86,7 @@ class Command(BaseCommand):
             cat = entry["category"],        \
             subcat = entry["sub_category"])
 
-            if not created:
+            if created:
                 wh_record.save()
             else:
                 skipped += 1
